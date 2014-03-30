@@ -60,11 +60,11 @@ void add(element **head, int value)
 
 void displayList(element *head)
 {
-    element *curr = head;
-    while (curr != NULL)
+    element *current = head;
+    while (current != NULL)
     {
-        printf("%d\t",curr->val);
-        curr = curr->next;
+        printf("%d\t",current->val);
+        current = current->next;
     }
 }
 
@@ -85,11 +85,31 @@ int searchList(element *head, int value)
 
 }
 
+void removeFromList(element **head, int value)
+{
+    element *curr, *toRem, *tmp;
+    curr = *head;
+    if (curr->val != value)
+    {
+        while (curr->next->val != value) curr = curr->next;
+        toRem = curr->next;
+        curr->next = toRem->next;
+        free(toRem);
+    }
+    else
+    {
+        tmp = curr->next;
+        free(curr);
+        curr = tmp;
+    }
+}
+
+
 int main()
 {
     srand(time(NULL));
     element *head, *curr;
-    int toFind, toAdd, n;
+    int toFind, toAdd, toRemove, n;
     head = NULL;
 
     for (i=1; i<=20; i++)
@@ -110,4 +130,9 @@ int main()
         add(&head, toAdd);
     }
     displayList(head);
+    printf("\nPodaj element który chcesz usunac: ");
+    scanf("%d",&toRemove);
+    removeFromList(&head,toRemove);
+    displayList(head);
+
 }
