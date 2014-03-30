@@ -63,7 +63,7 @@ void displayList(element *head)
     element *curr = head;
     while (curr != NULL)
     {
-        printf("%d\n",curr->val);
+        printf("%d\t",curr->val);
         curr = curr->next;
     }
 }
@@ -88,16 +88,26 @@ int searchList(element *head, int value)
 int main()
 {
     srand(time(NULL));
-    element *head, *curr, *toAdd;
-    int toFind;
+    element *head, *curr;
+    int toFind, toAdd, n;
     head = NULL;
 
     for (i=1; i<=20; i++)
     {
-        int n = rand()%20;
+        n = rand()%20;
         add(&head, n);
     }
     displayList(head);
+    printf("\nPodaj jaki element chcesz wyszukac: ");
     scanf("%d",&toFind);
-    printf("%d",searchList(head,toFind));
+    printf("Szukany element jest %d. elementem na liscie\n\n",searchList(head,toFind));
+    printf("Podaj liczbe elementow ktore chcesz wstawic: ");
+    scanf("%d",&n);
+    for (i=0; i<n; i++)
+    {
+        printf("Podaj %d. element: ",i+1);
+        scanf("%d",&toAdd);
+        add(&head, toAdd);
+    }
+    displayList(head);
 }
