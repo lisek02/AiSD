@@ -58,9 +58,9 @@ void add(element **head, int value)
     }
 }
 
-void displayList(element *first)
+void displayList(element *head)
 {
-    element *curr = first;
+    element *curr = head;
     while (curr != NULL)
     {
         printf("%d\n",curr->val);
@@ -68,15 +68,36 @@ void displayList(element *first)
     }
 }
 
+int searchList(element *head, int value)
+{
+    element *curr = head;
+    int i = 1;
+    if (curr != NULL)
+    {
+        while ((curr->val != value) && (curr->next != NULL))
+        {
+            curr = curr->next;
+            i++;
+        }
+        if (curr->val == value) return i;
+        else return 0;
+    }
+
+}
+
 int main()
 {
     srand(time(NULL));
     element *head, *curr, *toAdd;
+    int toFind;
     head = NULL;
+
     for (i=1; i<=20; i++)
     {
         int n = rand()%20;
         add(&head, n);
     }
     displayList(head);
+    scanf("%d",&toFind);
+    printf("%d",searchList(head,toFind));
 }
