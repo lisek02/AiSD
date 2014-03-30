@@ -33,11 +33,29 @@ void displayTab(int *tab)
 
 void add(element **head, int value)
 {
-    element *current;
-    current = (element*) malloc(sizeof(element));
-    current->val = value;
-    current->next = *head;
-    *head = current;
+    element *current, *new_el, *tmp;
+    current = *head;
+    new_el = (element*) malloc(sizeof(element));
+    new_el->val = value;
+    if (current == NULL)
+    {
+        *head = new_el;
+        new_el->next = NULL;
+    }
+    else if (value <= current->val)
+    {
+        *head = new_el;
+        new_el->next = current;
+    }
+    else
+    {
+        while ((current->next != NULL) && (current->next->val <= value))
+        {
+            current = current->next;
+        }
+        new_el->next = current->next;
+        current->next = new_el;
+    }
 }
 
 void displayList(element *first)
@@ -45,17 +63,20 @@ void displayList(element *first)
     element *curr = first;
     while (curr != NULL)
     {
-        printf("%d",curr->val);
+        printf("%d\n",curr->val);
         curr = curr->next;
     }
 }
 
 int main()
 {
+    srand(time(NULL));
     element *head, *curr, *toAdd;
     head = NULL;
-
-    add(&head, 15);
-    add(&head, 25);
+    for (i=1; i<=20; i++)
+    {
+        int n = rand()%20;
+        add(&head, n);
+    }
     displayList(head);
 }
