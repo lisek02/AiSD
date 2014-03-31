@@ -152,17 +152,22 @@ int main()
     wyswietl(tab);
     printf("\n-----------------\n");
 
-    ////AVL
+    //AVL
     insertion(tab);
-    //avlNode *avlRoot = NULL;
+    //////avlNode *avlRoot = NULL;
     avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
     preOrder(avlRoot);
+
+    //////szukanie elementu
     printf("\nPodaj wartosc ktora chcesz znalesc: ");
     scanf("%d",&toFind);
     printf("Znaleziony element: %d\n",searchAVL(avlRoot,toFind));
+
+    //////dodawanie elementu
     printf("\nPodaj wartosc ktora chcesz dodac: ");
     scanf("%d",&toInsert);
     insertAVL(&avlRoot,toInsert);
+
     preOrder(avlRoot);
 
     free(tab);
