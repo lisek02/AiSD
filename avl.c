@@ -83,7 +83,7 @@ int searchAVL(avlNode *root, int value)
     avlNode *curr;
     curr = root;
 
-    while((curr->val != value) && (curr->right != NULL) && (curr->left != NULL))    /////dopracowac!!!!
+    while((curr->val != value) && (curr->right != NULL) && (curr->left != NULL))    /////dopracowac!!!
     {
         if (value <= curr->val) curr = curr->left;
         else curr = curr->right;
