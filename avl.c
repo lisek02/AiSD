@@ -94,12 +94,11 @@ int searchAVL(avlNode *root, int value)
 
 void insertAVL(avlNode **root, int value)
 {
-
-
     if (*root == NULL)
     {
         avlNode *toInsert = newNode(value);
         *root = toInsert;
+        size++;
         return;
     }
     avlNode *curr;
@@ -110,6 +109,7 @@ void insertAVL(avlNode **root, int value)
         {
             avlNode *toInsert = newNode(value);
             curr->left = toInsert;
+            size++;
         }
         else
         {
@@ -123,6 +123,7 @@ void insertAVL(avlNode **root, int value)
         {
             avlNode *toInsert = newNode(value);
             curr->right = toInsert;
+            size++;
         }
         else
         {
@@ -140,15 +141,30 @@ void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
     preOrder(root->right);
 }
 
+void inOrder(avlNode *root, int *tab, int *i)    ////wyœwietlanie w porzadku inorder
+{
+    if (root == NULL) return;
+    inOrder(root->left, tab, i);
+    tab[*i] = root->val;
+    (*i)++;
+    inOrder(root->right, tab, i);
+}
+
+void inOrderTab(avlNode *root, int *tab)
+{
+
+}
+
 int main()
 {
     int toFind, toInsert;
 
     ////Tablica
-    printf("Podaj liczbe elementow:\n");
+    printf("Podaj liczbe elementow: ");
     scanf("%d",&size);
     int *tab = (int*)malloc(sizeof(int)*size);
     losuj(tab);
+    printf("losowo ulozona tablica:\n");
     wyswietl(tab);
     printf("\n-----------------\n");
 
@@ -156,6 +172,7 @@ int main()
     insertion(tab);
     //////avlNode *avlRoot = NULL;
     avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
+    printf("drzewo AVL preorder:\n");
     preOrder(avlRoot);
 
     //////szukanie elementu
@@ -163,13 +180,23 @@ int main()
     scanf("%d",&toFind);
     printf("Znaleziony element: %d\n",searchAVL(avlRoot,toFind));
 
+
     //////dodawanie elementu
     printf("\nPodaj wartosc ktora chcesz dodac: ");
     scanf("%d",&toInsert);
     insertAVL(&avlRoot,toInsert);
-
+    int *tab2 = (int*)malloc(sizeof(int)*size);
+    int tmp = 0;
+    inOrder(avlRoot, tab2, &tmp);
+    printf("wyswietlanie tablicy z drzewem AVL przepisanym inroder:\n");
+    wyswietl(tab2);
+    avlRoot = createAVL(tab2, 0, size-1, NULL);
+    printf("\ndrzewo AVL preorder:\n");
     preOrder(avlRoot);
 
+    //preOrder(avlRoot);
+
     free(tab);
+    free(tab2);
 
 }
