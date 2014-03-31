@@ -61,18 +61,20 @@ avlNode *newNode(int value)
 {
     avlNode *node = (avlNode*) malloc(sizeof(avlNode));
     node->val = value;
+    node->p = NULL;
     node->left = NULL;
     node->right = NULL;
     return node;
 }
 
-avlNode *createAVL(int *tab, int left, int right)
+avlNode *createAVL(int *tab, int left, int right, avlNode *parent)
 {
     if (left > right) return NULL;
     int n = left+(right-left)/2;
     avlNode *root = newNode(tab[n]);
-    root->left = createAVL(tab, left, n-1);
-    root->right = createAVL(tab, n+1, right);
+    root->left = createAVL(tab, left, n-1, root);
+    root->right = createAVL(tab, n+1, right, root);
+    root->p = parent;
     return root;
 }
 
@@ -94,7 +96,7 @@ int main()
     printf("\n-----------------\n");
     ////AVL
     insertion(tab);
-    avlNode *avlRoot = createAVL(tab, 0, size-1);
+    avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
     preOrder(avlRoot);
 
     free(tab);
