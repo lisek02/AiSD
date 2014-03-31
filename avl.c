@@ -92,6 +92,45 @@ int searchAVL(avlNode *root, int value)
     else return -1;
 }
 
+void insertAVL(avlNode *root, int value)
+{
+    avlNode *curr;
+    curr = root;
+
+    if (curr == NULL)
+    {
+        avlNode *toInsert = newNode(value);
+        curr = toInsert;
+        return;
+    }
+    if (value <= curr->val)
+    {
+        if (curr->left == NULL)
+        {
+            avlNode *toInsert = newNode(value);
+            curr->left = toInsert;
+        }
+        else
+        {
+            curr = curr->left;
+            insertAVL(curr, value);
+        }
+    }
+    else
+    {
+        if (curr->right == NULL)
+        {
+            avlNode *toInsert = newNode(value);
+            curr->right = toInsert;
+        }
+        else
+        {
+            curr = curr->right;
+            insertAVL(curr, value);
+        }
+    }
+}
+
 void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
 {
     if (root == NULL) return;
@@ -102,7 +141,7 @@ void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
 
 int main()
 {
-    int toFind;
+    int toFind, toInsert;
 
     ////Tablica
     printf("Podaj liczbe elementow:\n");
@@ -114,12 +153,16 @@ int main()
 
     ////AVL
     insertion(tab);
-    //avlNode *avlRoot = NULL;
-    avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
+    avlNode *avlRoot = NULL;
+    //avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
     preOrder(avlRoot);
     printf("\nPodaj wartosc ktora chcesz znalesc: ");
     scanf("%d",&toFind);
-    printf("Znaleziony element: %d",searchAVL(avlRoot,toFind));
+    //printf("Znaleziony element: %d\n",searchAVL(avlRoot,toFind));
+    printf("\nPodaj wartosc ktora chcesz dodac: ");
+    scanf("%d",&toInsert);
+    insertAVL(avlRoot,toInsert);
+    preOrder(avlRoot);
 
     free(tab);
 
