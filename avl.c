@@ -150,11 +150,6 @@ void inOrder(avlNode *root, int *tab, int *i)    ////wyœwietlanie w porzadku ino
     inOrder(root->right, tab, i);
 }
 
-void inOrderTab(avlNode *root, int *tab)
-{
-
-}
-
 int main()
 {
     int toFind, toInsert;
