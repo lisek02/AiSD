@@ -130,7 +130,7 @@ int main()
         add(&head, toAdd);
     }
     displayList(head);
-    printf("\nPodaj element który chcesz usunac: ");
+    printf("\nPodaj element ktory chcesz usunac: ");
     scanf("%d",&toRemove);
     removeFromList(&head,toRemove);
     displayList(head);
