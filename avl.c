@@ -57,7 +57,7 @@ int split(int *tab, int right, int left)
 }
 /////////////////AVL///////////////
 
-avlNode *newNode(int value)
+avlNode *newNode(int value)  /////tworzenie nowego wezla
 {
     avlNode *node = (avlNode*) malloc(sizeof(avlNode));
     node->val = value;
@@ -67,7 +67,7 @@ avlNode *newNode(int value)
     return node;
 }
 
-avlNode *createAVL(int *tab, int left, int right, avlNode *parent)
+avlNode *createAVL(int *tab, int left, int right, avlNode *parent)  ////tworzenie drzewa z tablicy
 {
     if (left > right) return NULL;
     int n = left+(right-left)/2;
@@ -78,7 +78,21 @@ avlNode *createAVL(int *tab, int left, int right, avlNode *parent)
     return root;
 }
 
-void preOrder(avlNode* root)
+int searchAVL(avlNode *root, int value)
+{
+    avlNode *curr;
+    curr = root;
+
+    while((curr->val != value) && (curr->right != NULL) && (curr->left != NULL))    /////dopracowac!!!!
+    {
+        if (value <= curr->val) curr = curr->left;
+        else curr = curr->right;
+    }
+    if (curr->val == value) return curr->val;
+    else return -1;
+}
+
+void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
 {
     if (root == NULL) return;
     printf("%d\t",root->val);
@@ -88,16 +102,24 @@ void preOrder(avlNode* root)
 
 int main()
 {
+    int toFind;
+
+    ////Tablica
     printf("Podaj liczbe elementow:\n");
     scanf("%d",&size);
     int *tab = (int*)malloc(sizeof(int)*size);
     losuj(tab);
     wyswietl(tab);
     printf("\n-----------------\n");
+
     ////AVL
     insertion(tab);
+    //avlNode *avlRoot = NULL;
     avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
     preOrder(avlRoot);
+    printf("\nPodaj wartosc ktora chcesz znalesc: ");
+    scanf("%d",&toFind);
+    printf("Znaleziony element: %d",searchAVL(avlRoot,toFind));
 
     free(tab);
 
