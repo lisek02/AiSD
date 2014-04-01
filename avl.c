@@ -133,6 +133,58 @@ void insertAVL(avlNode **root, int value)
     }
 }
 
+void deleteAVL(avlNode **root, int value)   //////nie dziala!
+{
+    avlNode *curr, *tmp, *tmp2, *tmp3;
+    curr = *root;
+
+    while (curr != NULL)
+    {
+        if (value <= curr->val) curr = curr->left;
+        else curr = curr->right;
+    }
+
+    tmp3 = curr;
+    if (curr->right != NULL)
+    {
+        curr = curr->right;
+        while (curr->left->left != NULL)
+        {
+            curr = curr->left;
+        }
+        tmp = curr->left;
+        if (curr->left->right != NULL)
+        {
+            curr->left = curr->left->right;
+        }
+        tmp->right = tmp3->right;
+        tmp->left = tmp3->left;
+        tmp3 = tmp;
+        free(tmp);
+    }
+    else if (curr->left != NULL)
+    {
+        curr = curr->left;
+        while (curr->right->right != NULL)
+        {
+            curr = curr->right;
+        }
+        tmp = curr->right;
+        if (curr->right->left != NULL)
+        {
+            curr->right = curr->right->left;
+        }
+        tmp->right = tmp3->right;
+        tmp->left = tmp3->left;
+        tmp3 = tmp;
+        free(tmp);
+    }
+    else
+    {
+        free(curr);
+    }
+}
+
 void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
 {
     if (root == NULL) return;
@@ -152,7 +204,7 @@ void inOrder(avlNode *root, int *tab, int *i)    ////wyœwietlanie w porzadku ino
 
 int main()
 {
-    int toFind, toInsert;
+    int toFind, toInsert, toDelete;
 
     ////Tablica
     printf("Podaj liczbe elementow: ");
@@ -188,6 +240,13 @@ int main()
     avlRoot = createAVL(tab2, 0, size-1, NULL);
     printf("\ndrzewo AVL preorder:\n");
     preOrder(avlRoot);
+
+    //////usuwanie elementu
+    printf("\nPodaj wartosc ktora chcesz usunac: ");
+    scanf("%d",&toDelete);
+    deleteAVL(&avlRoot,toDelete);
+    preOrder(avlRoot);
+
 
     //preOrder(avlRoot);
 
