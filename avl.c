@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int i,size;
+int i,size,size2;
 
 struct avl
 {
@@ -17,8 +17,8 @@ void losuj(int *tab)
 {
     srand(time(NULL));
     int i,tmp,random;
-    for (i=0; i<size; i++) tab[i] = i;
-    for (i=size-1; i>0; i--)
+    for (i=0; i<size2; i++) tab[i] = i;
+    for (i=(size2)-1; i>0; i--)
     {
         random = rand()%i;
         tmp = tab[random];
@@ -30,7 +30,7 @@ void losuj(int *tab)
 void wyswietl(int *tab)
 {
     int i;
-    for (i=0; i<(int)size; i++) printf("%d\t",tab[i]);
+    for (i=0; i<size2; i++) printf("%d\t",tab[i]);
 }
 
 void insertion(int *tab)
@@ -76,6 +76,15 @@ avlNode *createAVL(int *tab, int left, int right, avlNode *parent)  ////tworzeni
     root->right = createAVL(tab, n+1, right, root);
     root->p = parent;
     return root;
+}
+
+int heightAVL(avlNode *root)
+{
+    if(root == NULL) return 0;
+    int h1 = heightAVL(root->left);
+    int h2 = heightAVL(root->right);
+    if (h1>h2) return 1+h1;
+    else return 1+h2;
 }
 
 int searchAVL(avlNode *root, int value)
@@ -133,56 +142,105 @@ void insertAVL(avlNode **root, int value)
     }
 }
 
-void deleteAVL(avlNode **root, int value)   //////nie dziala!
+avlNode *minValueNode(avlNode *root)
 {
-    avlNode *curr, *tmp, *tmp2, *tmp3;
+    avlNode *current = root;
+
+    /* loop down to find the leftmost leaf */
+    while (current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+avlNode *deleteAVL2(avlNode *root, int value)
+{
+    if (root == NULL)
+        return root;
+
+    if (value < root->val)
+        root->left = deleteAVL2(root->left, value);
+
+    else if (value > root->val)
+        root->right = deleteAVL2(root->right, value);
+
+    else
+    {
+        if ((root->left == NULL) || (root->right == NULL))
+        {
+            avlNode *temp = root->left;
+            if (temp != NULL) root = root->left;
+            else root = root->right;
+
+            if (temp == NULL)
+            {
+                temp = root;
+                root = NULL;
+            }
+            else *root = *temp;
+
+            free(temp);
+        }
+        else
+        {
+            avlNode *temp = minValueNode(root->right);
+
+            root->val = temp->val;
+            root->right = deleteAVL2(root->right, temp->val);
+        }
+    }
+    if (root == NULL) return root;
+}
+
+void deleteAVL(avlNode **root, int value)   //Nie usuwa, a powinno
+{
+    avlNode *curr, *tmp, *parentOfCurrent, *toReplace;
     curr = *root;
 
-    while (curr != NULL)
+    while (curr->val != value)
     {
         if (value <= curr->val) curr = curr->left;
         else curr = curr->right;
     }
 
-    tmp3 = curr;
-    if (curr->right != NULL)
+    if ((curr->left == NULL) && (curr->right == NULL))
     {
-        curr = curr->right;
-        while (curr->left->left != NULL)
-        {
-            curr = curr->left;
-        }
-        tmp = curr->left;
-        if (curr->left->right != NULL)
-        {
-            curr->left = curr->left->right;
-        }
-        tmp->right = tmp3->right;
-        tmp->left = tmp3->left;
-        tmp3 = tmp;
-        free(tmp);
+        curr->val = 666;
+        free(curr);
     }
-    else if (curr->left != NULL)
+    else if ((curr->right != NULL) && (curr->left == NULL))
     {
-        curr = curr->left;
-        while (curr->right->right != NULL)
-        {
-            curr = curr->right;
-        }
-        tmp = curr->right;
-        if (curr->right->left != NULL)
-        {
-            curr->right = curr->right->left;
-        }
-        tmp->right = tmp3->right;
-        tmp->left = tmp3->left;
-        tmp3 = tmp;
-        free(tmp);
+        toReplace = curr->right;
+        curr->val = 666;
+        free(curr);
+        curr = toReplace;
+    }
+    else if ((curr->left != NULL) && (curr->right == NULL))
+    {
+        toReplace = curr->left;
+        curr->val = 666;
+        free(curr);
+        curr = toReplace;
     }
     else
     {
+        tmp = curr;
+        curr = curr->right;
+        while (curr->left != NULL) curr = curr->left;
+        tmp->val = curr->val;
+        curr->val = 666;
         free(curr);
     }
+}
+
+void removeAVL(avlNode *root)       ////nie dziala
+{
+    avlNode *toRemove;
+    if (root == NULL) return;
+    removeAVL(root->left);
+    removeAVL(root->right);
+    toRemove = root;
+    free(toRemove);
 }
 
 void preOrder(avlNode *root)    ////wyœwietlanie w porzadku preorder
@@ -204,23 +262,26 @@ void inOrder(avlNode *root, int *tab, int *i)    ////wyœwietlanie w porzadku ino
 
 int main()
 {
-    int toFind, toInsert, toDelete;
+    int toFind, toInsert, toDelete, diff;
 
     ////Tablica
     printf("Podaj liczbe elementow: ");
     scanf("%d",&size);
-    int *tab = (int*)malloc(sizeof(int)*size);
+    size2 = size*1.1;
+    diff = size2 - size;
+    printf("%d",diff);
+    int *tab = (int*)malloc(sizeof(int)*size2);
     losuj(tab);
     printf("losowo ulozona tablica:\n");
     wyswietl(tab);
     printf("\n-----------------\n");
 
     //AVL
-    insertion(tab);
-    //////avlNode *avlRoot = NULL;
+    insertion(tab);     //sortowanie rosn¹co tablicy
     avlNode *avlRoot = createAVL(tab, 0, size-1, NULL);
     printf("drzewo AVL preorder:\n");
     preOrder(avlRoot);
+    printf("\nwysokosc drzewa: %d",heightAVL(avlRoot));
 
     //////szukanie elementu
     printf("\nPodaj wartosc ktora chcesz znalesc: ");
@@ -229,9 +290,13 @@ int main()
 
 
     //////dodawanie elementu
-    printf("\nPodaj wartosc ktora chcesz dodac: ");
-    scanf("%d",&toInsert);
-    insertAVL(&avlRoot,toInsert);
+    printf("\nDodaje elementy: ");
+    for (i=size; i<size2; i++)
+    {
+        printf("%d ",tab[i]);
+        insertAVL(&avlRoot,tab[i]);
+    }
+    printf("\n");
     int *tab2 = (int*)malloc(sizeof(int)*size);
     int tmp = 0;
     inOrder(avlRoot, tab2, &tmp);
@@ -242,11 +307,16 @@ int main()
     preOrder(avlRoot);
 
     //////usuwanie elementu
+
     printf("\nPodaj wartosc ktora chcesz usunac: ");
     scanf("%d",&toDelete);
-    deleteAVL(&avlRoot,toDelete);
+    deleteAVL2(avlRoot,toDelete);
     preOrder(avlRoot);
 
+
+    printf("\nUsuwanie calego AVL:\n");
+    removeAVL(avlRoot);
+    preOrder(avlRoot);
 
     //preOrder(avlRoot);
 
